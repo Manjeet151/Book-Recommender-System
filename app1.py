@@ -1,9 +1,9 @@
 import pandas as pd
 import pickle
 
-# Load your CSV (or dataframe that works locally)
-popular_df = pd.read_csv('popular.csv')  # replace with your original CSV if needed
+# Load your CSV (the working file)
+popular_df = pd.read_csv('popular.csv')  # Make sure this CSV works locally
 
-# Save it as a pickle
+# Save as a proper pickle
 with open('popular.pkl', 'wb') as f:
     pickle.dump(popular_df, f)
