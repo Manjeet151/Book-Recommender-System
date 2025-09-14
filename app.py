@@ -3,26 +3,28 @@ import pickle
 import numpy as np
 from fuzzywuzzy import process
 import time
+import os
 
 app = Flask(__name__)
 
-# Load data once at startup (not on each request)
+# Use absolute paths to make sure Render finds the files
+base_dir = os.path.dirname(__file__)
+
+def load_pickle(filename):
+    with open(os.path.join(base_dir, filename), 'rb') as f:
+        return pickle.load(f)
+
 print("Loading data files...")
 start_time = time.time()
 
-popular_df = pickle.load(open('popular.pkl','rb'))
-pt = pickle.load(open('pt.pkl','rb'))
-books = pickle.load(open('books.pkl','rb'))
-similarity_scores = pickle.load(open('similarity_scores.pkl','rb'))
+popular_df = load_pickle('popular.pkl')
+pt = load_pickle('pt.pkl')
+books = load_pickle('books.pkl')
+similarity_scores = load_pickle('similarity_scores.pkl')
 
 # Precompute book dictionary for fast lookups
-book_dict = {}
-for _, row in books.iterrows():
-    if row['Book-Title'] not in book_dict:
-        book_dict[row['Book-Title']] = {
-            'author': row['Book-Author'],
-            'image': row['Image-URL-M']
-        }
+book_dict = {row['Book-Title']: {'author': row['Book-Author'], 'image': row['Image-URL-M']}
+             for _, row in books.iterrows()}
 
 # Precompute all books list for fuzzy matching
 all_books = pt.index.tolist()
